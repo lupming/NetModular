@@ -3,6 +3,7 @@
   <PropertyGroup>
     <Description>NetModular model validate for FluentValidation</Description>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>

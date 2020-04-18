@@ -3,6 +3,7 @@
   <PropertyGroup>
     <Description>NetModular utils</Description>
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>

@@ -3,6 +3,7 @@
   <PropertyGroup>
     <Description>NetModular data implement for SqlServer</Description>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>

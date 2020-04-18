@@ -3,6 +3,7 @@
   <PropertyGroup>
     <Description>NetModular utils for Mvc</Description>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>

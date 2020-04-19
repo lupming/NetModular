@@ -4,23 +4,13 @@ import module from './module'
 import routes from './routes'
 import store from './store'
 import components from './components'
-import mixins from './mixins'
 import NetmodularSkinsClassics from 'netmodular-skins-classics'
 
 const admin = {
   module,
   routes,
   store,
-  components,
-  callback({ Vue }) {
-    // 配置信息接口
-    Vue.prototype.$config = {
-      //获取单个配置值
-      get(key, type, moduleCode) {
-        return $api.admin.config.getValue(key, type, moduleCode)
-      }
-    }
-  }
+  components
 }
 
 // 模块列表
@@ -65,7 +55,7 @@ export default {
 
     // 设置账户类型
     if (config.accountTypes) {
-      UIConfig.login.accountTypes = config.accountTypes
+      UIConfig.component.login.accountTypes = config.accountTypes
     }
 
     window.loaded = true
@@ -77,5 +67,3 @@ export default {
     }, 20)
   }
 }
-
-export { mixins }

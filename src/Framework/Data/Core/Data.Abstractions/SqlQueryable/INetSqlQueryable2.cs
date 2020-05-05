@@ -233,6 +233,16 @@ namespace NetModular.Lib.Data.Abstractions.SqlQueryable
         /// <returns></returns>
         INetSqlQueryable<TEntity, TEntity2> WhereNotIn<TKey>(Expression<Func<TEntity, TEntity2, TKey>> key, IEnumerable<TKey> list);
 
+        /// <summary>
+        /// 子查询
+        /// </summary>
+        /// <typeparam name="TKey"></typeparam>
+        /// <param name="key">列</param>
+        /// <param name="queryOperator">运算逻辑</param>
+        /// <param name="queryable">子查询的查询构造器</param>
+        /// <returns></returns>
+        INetSqlQueryable<TEntity, TEntity2> Where<TKey>(Expression<Func<TEntity, TEntity2, TKey>> key, QueryOperator queryOperator, INetSqlQueryable queryable);
+
         #endregion
 
         #region ==Limit==
@@ -265,8 +275,9 @@ namespace NetModular.Lib.Data.Abstractions.SqlQueryable
         /// <typeparam name="TEntity3"></typeparam>
         /// <param name="onExpression"></param>
         /// <param name="tableName">自定义表名</param>
+        /// <param name="noLock">针对SqlServer的NoLock特性，默认开启</param>
         /// <returns></returns>
-        INetSqlQueryable<TEntity, TEntity2, TEntity3> LeftJoin<TEntity3>(Expression<Func<TEntity, TEntity2, TEntity3, bool>> onExpression, string tableName = null) where TEntity3 : IEntity, new();
+        INetSqlQueryable<TEntity, TEntity2, TEntity3> LeftJoin<TEntity3>(Expression<Func<TEntity, TEntity2, TEntity3, bool>> onExpression, string tableName = null, bool noLock = true) where TEntity3 : IEntity, new();
 
         /// <summary>
         /// 内连接
@@ -274,8 +285,9 @@ namespace NetModular.Lib.Data.Abstractions.SqlQueryable
         /// <typeparam name="TEntity3"></typeparam>
         /// <param name="onExpression"></param>
         /// <param name="tableName">自定义表名</param>
+        /// <param name="noLock">针对SqlServer的NoLock特性，默认开启</param>
         /// <returns></returns>
-        INetSqlQueryable<TEntity, TEntity2, TEntity3> InnerJoin<TEntity3>(Expression<Func<TEntity, TEntity2, TEntity3, bool>> onExpression, string tableName = null) where TEntity3 : IEntity, new();
+        INetSqlQueryable<TEntity, TEntity2, TEntity3> InnerJoin<TEntity3>(Expression<Func<TEntity, TEntity2, TEntity3, bool>> onExpression, string tableName = null, bool noLock = true) where TEntity3 : IEntity, new();
 
         /// <summary>
         /// 右连接
@@ -283,8 +295,9 @@ namespace NetModular.Lib.Data.Abstractions.SqlQueryable
         /// <typeparam name="TEntity3"></typeparam>
         /// <param name="onExpression"></param>
         /// <param name="tableName">自定义表名</param>
+        /// <param name="noLock">针对SqlServer的NoLock特性，默认开启</param>
         /// <returns></returns>
-        INetSqlQueryable<TEntity, TEntity2, TEntity3> RightJoin<TEntity3>(Expression<Func<TEntity, TEntity2, TEntity3, bool>> onExpression, string tableName = null) where TEntity3 : IEntity, new();
+        INetSqlQueryable<TEntity, TEntity2, TEntity3> RightJoin<TEntity3>(Expression<Func<TEntity, TEntity2, TEntity3, bool>> onExpression, string tableName = null, bool noLock = true) where TEntity3 : IEntity, new();
 
         #endregion
 
@@ -380,7 +393,7 @@ namespace NetModular.Lib.Data.Abstractions.SqlQueryable
         /// 分组(group by 1)
         /// </summary>
         /// <returns></returns>
-        IGroupByQueryable2<INetSqlGroupingKey2<TEntity,TEntity2>, TEntity, TEntity2> GroupBy();
+        IGroupByQueryable2<INetSqlGroupingKey2<TEntity, TEntity2>, TEntity, TEntity2> GroupBy();
 
         #endregion
 

@@ -236,8 +236,16 @@ namespace NetModular.Lib.Data.Core.SqlQueryable.Internal
 
         public string QuerySqlBuild(out IQueryParameters parameters)
         {
-            string sql;
             parameters = new QueryParameters();
+            return QuerySqlBuild(parameters);
+        }
+
+        public string QuerySqlBuild(IQueryParameters parameters)
+        {
+            if (parameters == null)
+                throw new ArgumentNullException("参数集合不能为null");
+
+            string sql;
 
             //分页查询
             if (_queryBody.Take > 0)
@@ -380,10 +388,21 @@ namespace NetModular.Lib.Data.Core.SqlQueryable.Internal
             if (_queryBody.JoinDescriptors.Count == 1)
             {
                 sqlBuilder.AppendFormat(" {0} ", GetTableName(first.TableName));
+
+                //附加NOLOCK特性
+                if (_sqlAdapter.SqlDialect == SqlDialect.SqlServer && first.NoLock)
+                {
+                    sqlBuilder.Append("WITH (NOLOCK) ");
+                }
                 return;
             }
 
             sqlBuilder.AppendFormat(" {0} AS {1} ", GetTableName(first.TableName), _sqlAdapter.AppendQuote(first.Alias));
+            //附加NOLOCK特性
+            if (_sqlAdapter.SqlDialect == SqlDialect.SqlServer && first.NoLock)
+            {
+                sqlBuilder.Append("WITH (NOLOCK) ");
+            }
 
             for (var i = 1; i < _queryBody.JoinDescriptors.Count; i++)
             {
@@ -401,8 +420,14 @@ namespace NetModular.Lib.Data.Core.SqlQueryable.Internal
                         break;
                 }
 
-                sqlBuilder.AppendFormat("JOIN {0} AS {1} ON ", GetTableName(descriptor.TableName, descriptor.EntityDescriptor.SqlAdapter.Database), _sqlAdapter.AppendQuote(descriptor.Alias));
+                sqlBuilder.AppendFormat("JOIN {0} AS {1} ", GetTableName(descriptor.TableName, descriptor.EntityDescriptor.SqlAdapter.Database), _sqlAdapter.AppendQuote(descriptor.Alias));
+                //附加NOLOCK特性
+                if (_sqlAdapter.SqlDialect == SqlDialect.SqlServer && first.NoLock)
+                {
+                    sqlBuilder.Append("WITH (NOLOCK) ");
+                }
 
+                sqlBuilder.Append("ON ");
                 sqlBuilder.Append(_resolver.Resolve(descriptor.On, parameters));
             }
         }
@@ -413,14 +438,20 @@ namespace NetModular.Lib.Data.Core.SqlQueryable.Internal
             for (var i = 0; i < _queryBody.Where.Count; i++)
             {
                 var w = _queryBody.Where[i];
-                if (w.Type == QueryWhereType.LambdaExpression)
+                switch (w.Type)
                 {
-                    whereSql.Append(_resolver.Resolve(w.Expression, parameters));
+                    case QueryWhereType.LambdaExpression:
+                        whereSql.Append(_resolver.Resolve(w.Expression, parameters));
+                        break;
+                    case QueryWhereType.SubQuery:
+                        var subSql = w.SubQueryable.ToSql(parameters);
+                        whereSql.AppendFormat("{0} {1} ({2}) ", _resolver.Resolve(w.SubQueryColumn, parameters), w.SubQueryOperator.ToDescription(), subSql);
+                        break;
+                    case QueryWhereType.Sql:
+                        whereSql.AppendFormat(" ({0}) ", w.Sql);
+                        break;
                 }
-                else
-                {
-                    whereSql.AppendFormat(" ({0}) ", w.Sql);
-                }
+
                 if (i < _queryBody.Where.Count - 1)
                 {
                     whereSql.Append(" AND ");

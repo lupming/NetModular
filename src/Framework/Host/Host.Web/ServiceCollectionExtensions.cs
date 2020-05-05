@@ -5,10 +5,13 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using NetModular.Lib.Auth.Jwt;
+using NetModular.Lib.Cache.Integration;
 using NetModular.Lib.Config.Core;
 using NetModular.Lib.Data.Integration;
+using NetModular.Lib.Excel.Integration;
 using NetModular.Lib.Mapper.AutoMapper;
 using NetModular.Lib.Module.AspNetCore;
+using NetModular.Lib.OSS.Integration;
 using NetModular.Lib.Swagger.Core;
 using NetModular.Lib.Swagger.Core.Conventions;
 using NetModular.Lib.Utils.Core;
@@ -32,6 +35,9 @@ namespace NetModular.Lib.Host.Web
             services.AddSingleton(hostOptions);
 
             services.AddNetModularServices();
+
+            //加载缓存
+            services.AddCache(cfg);
 
             //加载模块
             var modules = services.AddModules();
@@ -100,7 +106,7 @@ namespace NetModular.Lib.Host.Web
             services.AddHttpClient();
 
             //添加模块的自定义服务
-            services.AddModuleServices(modules, env);
+            services.AddModuleServices(modules, env, cfg);
 
             //添加配置管理
             services.AddConfig();
@@ -109,7 +115,13 @@ namespace NetModular.Lib.Host.Web
             services.AddJwtAuth();
 
             //添加模块初始化服务
-            services.AddModuleInitializerServices(modules, env);
+            services.AddModuleInitializerServices(modules, env, cfg);
+
+            //添加Excel相关功能
+            services.AddExcel(cfg);
+
+            //添加OSS相关功能
+            services.AddOSS(cfg);
 
             return services;
         }

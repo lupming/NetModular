@@ -42,6 +42,8 @@ Classics [https://github.com/iamoldli/NetModular.Skins.Classics](https://github.
 账 户：admin  
 密 码: admin  
 
+演示源码：[https://github.com/iamoldli/NetModular.Demo](https://github.com/iamoldli/NetModular.Demo)
+
 ## 官方文档
 
 文档地址： [https://docs.17mkh.com](https://docs.17mkh.com)
@@ -75,10 +77,3 @@ Classics [https://github.com/iamoldli/NetModular.Skins.Classics](https://github.
 QQ 群：点击加群 [903210423](http://shang.qq.com/wpa/qunwpa?idkey=cfc871fccc7173f17ac2c9d12c8a31a7549c260e6aefcb6a40fdcc4b423940b0)
 
 <img src="./img/qq.jpg" alt="QQ" height="300"/>
-
-<h4 align="center">
-如您觉得本框架对您有帮助，可以请作者媳妇儿吃一碗酸辣粉~
-<br>
-<br>
-  <img src="./img/airpay.jpg" alt="支付宝" height="320"/><img src="./img/wechat.jpg" alt="微信" height="320"/>
-</h4>

@@ -33,5 +33,28 @@ namespace NetModular.Module.Admin.Domain.Account
 
             return ResultModel.Success();
         }
+
+        /// <summary>
+        /// 微信登录识别号
+        /// </summary>
+        [Nullable]
+        [Length(100)]
+        [Ignore]
+        public string WechatID { get; set; }
+
+        /// <summary>
+        /// 支付宝登录识别号
+        /// </summary>
+		[Nullable]
+        [Ignore]
+        public string AlipayID { get; set; }
+
+        /// <summary>
+        /// QQ登录识别号
+        /// </summary>
+		[Nullable]
+        [Ignore]
+        public string QQID { get; set; }
+
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using NetModular.Lib.Data.Abstractions;
+using NetModular.Lib.Data.Abstractions.Entities;
 using NetModular.Lib.Data.Abstractions.Enums;
 using NetModular.Lib.Data.Abstractions.Pagination;
 using NetModular.Lib.Data.Abstractions.SqlQueryable;
@@ -45,6 +46,11 @@ namespace NetModular.Lib.Data.Core.SqlQueryable.Internal
         /// 查询的列
         /// </summary>
         public LambdaExpression Select { get; set; }
+
+        /// <summary>
+        /// 查询排除的列
+        /// </summary>
+        public LambdaExpression SelectExclude { get; set; }
 
         /// <summary>
         /// 过滤条件
@@ -303,6 +309,10 @@ namespace NetModular.Lib.Data.Core.SqlQueryable.Internal
         {
             Select = selectExpression;
         }
+        public void SetSelectExclude(LambdaExpression selectExpression)
+        {
+            SelectExclude = selectExpression;
+        }
 
         public void SetLimit(int skip, int take)
         {
@@ -374,6 +384,60 @@ namespace NetModular.Lib.Data.Core.SqlQueryable.Internal
         }
 
         /// <summary>
+        /// 获取列描述
+        /// </summary>
+        /// <param name="exp"></param>
+        /// <param name="lambda"></param>
+        /// <returns></returns>
+        public IColumnDescriptor GetColumnDescriptor(MemberExpression exp, LambdaExpression lambda)
+        {
+            var index = 0;
+            var memberParameter = exp.Expression as ParameterExpression;
+            if (memberParameter == null)
+                return null;
+
+            foreach (var parameter in lambda.Parameters)
+            {
+                if (parameter.Name.Equals(memberParameter.Name))
+                    break;
+                index++;
+            }
+            var descriptor = JoinDescriptors[index];
+            var name = exp.Member.Name;
+
+            return GetColumnDescriptor(name, descriptor);
+        }
+
+        /// <summary>
+        /// 获取列描述
+        /// </summary>
+        /// <param name="exp"></param>
+        /// <param name="lambda"></param>
+        /// <param name="colName">列名</param>
+        /// <returns></returns>
+        public IColumnDescriptor GetColumnDescriptor(MemberExpression exp, LambdaExpression lambda, out string colName)
+        {
+            colName = string.Empty;
+            var index = 0;
+            var memberParameter = exp.Expression as ParameterExpression;
+            if (memberParameter == null)
+                return null;
+
+            foreach (var parameter in lambda.Parameters)
+            {
+                if (parameter.Name.Equals(memberParameter.Name))
+                    break;
+                index++;
+            }
+            var descriptor = JoinDescriptors[index];
+            var name = exp.Member.Name;
+
+            colName = GetColumnName(name, descriptor);
+
+            return GetColumnDescriptor(name, descriptor);
+        }
+
+        /// <summary>
         /// 获取列名
         /// </summary>
         /// <param name="name"></param>
@@ -381,9 +445,7 @@ namespace NetModular.Lib.Data.Core.SqlQueryable.Internal
         /// <returns></returns>
         public string GetColumnName(string name, QueryJoinDescriptor descriptor)
         {
-            var col = descriptor.EntityDescriptor.Columns.FirstOrDefault(m => m.PropertyInfo.Name.Equals(name));
-
-            Check.NotNull(col, nameof(col), $"({name})列不存在");
+            var col = GetColumnDescriptor(name, descriptor);
 
             //只有一个实体的时候，不需要别名
             if (JoinDescriptors.Count == 1)
@@ -394,6 +456,21 @@ namespace NetModular.Lib.Data.Core.SqlQueryable.Internal
 
             // ReSharper disable once PossibleNullReferenceException
             return $"{_sqlAdapter.AppendQuote(descriptor.Alias)}.{_sqlAdapter.AppendQuote(col.Name)}";
+        }
+
+        /// <summary>
+        /// 获取列描述信息
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="descriptor"></param>
+        /// <returns></returns>
+        public IColumnDescriptor GetColumnDescriptor(string name, QueryJoinDescriptor descriptor)
+        {
+            var col = descriptor.EntityDescriptor.Columns.FirstOrDefault(m => m.PropertyInfo.Name.Equals(name));
+
+            Check.NotNull(col, nameof(col), $"({name})列不存在");
+
+            return col;
         }
 
         /// <summary>

@@ -15,5 +15,9 @@
     <PackageReference Include="Jiguang.JPush.Standard" Version="2.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\Admin\Library\Application\Application.csproj" />
+  </ItemGroup>
+
 
 </Project>

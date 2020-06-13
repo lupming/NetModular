@@ -35,6 +35,8 @@ namespace NetModular
         /// <returns></returns>
         public static bool EqualsIgnoreCase(this string s, string value)
         {
+            if (s == null)
+                return false;
             return s.Equals(value, StringComparison.OrdinalIgnoreCase);
         }
 

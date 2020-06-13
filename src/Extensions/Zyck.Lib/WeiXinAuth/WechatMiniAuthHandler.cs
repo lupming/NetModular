@@ -27,6 +27,30 @@ namespace Zyck.Frame.Extensions.WeiXinAuth
         }
 
         /// <summary>
+        /// 获取小程序关联的OpenId
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public async Task<IResultModel<string>> GetOpenId(WechatMiniAuthParam param)
+        {
+            ResultModel<string> resultModel = new ResultModel<string>();
+
+            var url = $"{Code2SessionUrl}?appid={param.AppId}&secret={param.AppSecret}&js_code={param.Code}&grant_type=authorization_code";
+            var httpClient = new HttpClient();
+            var content = await httpClient.GetStringAsync(url);
+
+            if (string.IsNullOrWhiteSpace(content))
+                return resultModel.Failed("参数有误");
+
+            var result = JsonConvert.DeserializeObject<Code2SessionGetResult>(content);
+            if (result.ErrCode != 0)
+                return resultModel.Failed(result.ErrMessage);
+
+            return resultModel.Success(result.OpenId);
+        }
+
+
+        /// <summary>
         /// 获取微信小程序用户信息
         /// </summary>
         /// <param name="param"></param>
@@ -47,6 +71,7 @@ namespace Zyck.Frame.Extensions.WeiXinAuth
                 return resultModel.Failed(result.ErrMessage);
 
             WechatDetails<Watermark> wechardetails = DeserializeWechatMiniInfo(result.SessionKey, param.Iv, param.EncryptedData);
+            wechardetails.watermark.openid = result.OpenId;
 
             return resultModel.Success(wechardetails);
         }

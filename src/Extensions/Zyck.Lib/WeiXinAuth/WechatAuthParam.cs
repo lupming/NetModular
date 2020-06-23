@@ -25,6 +25,7 @@ namespace Zyck.Frame.Extensions.WeiXinAuth
         [Required]
         public string Iv { get; set; }
 
+        public string AccountType { get; set; }
     }
 
 

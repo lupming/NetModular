@@ -8,7 +8,7 @@
         /// <summary>
         /// 租户编号
         /// </summary>
-        public const string TenantId = "tid";
+        public const string TenantId = "ttid";
 
         /// <summary>
         /// 账户编号

@@ -419,25 +419,6 @@ namespace Zyck.Frame.Extensions
         }
         #endregion
 
-        #region 显示错层方法
-        /// <summary>
-        /// 显示错层方法
-        /// </summary>
-        public static string LevelName(string name, decimal? level)
-        {
-            if (level >= 1)
-            {
-                string nbsp = "";
-                for (int i = 0; i < level; i++)
-                {
-                    nbsp += "　";
-                }
-                name = nbsp + "|--" + name;
-            }
-            return name;
-        }
-        #endregion
-
         #region 生成随机字母或数字
 
         private static readonly Random Random = new Random();
@@ -538,37 +519,6 @@ namespace Zyck.Frame.Extensions
         }
         #endregion
 
-        #region 返回采购单入库状态
-        /// <summary>
-        /// 返回采购单入库状态
-        /// </summary>
-        /// <param name="status">状态</param>
-        /// <returns></returns>
-        public static string PurchaseStatus(string status)
-        {
-            var str = "";
-            switch (int.Parse(status))
-            {
-                case 1: str = "未完成入库"; break;
-                case 2: str = "未完成付款"; break;
-                case 3: str = "未完成到票"; break;
-                case 4: str = "完成"; break;
-            }
-            return str;
-        }
-        #endregion
-
-        #region 生成采购单编号
-        /// <summary>
-        /// 生成采购单编号
-        /// </summary>
-        /// <returns></returns>
-        public static string PurchaseNumber(int lastNumber)
-        {
-            return "CG-" + DateTime.Now.ToString("yyyyMMdd") + "-" + lastNumber.ToString();
-        }
-        #endregion
-
         #region 上传配置
         /// <summary>
         ///  根据文件类型分配路径
@@ -636,42 +586,6 @@ namespace Zyck.Frame.Extensions
         }
         #endregion
 
-        #region 返回活动名称
-        /// <summary>
-        /// 返回活动名称
-        /// </summary>
-        /// <param name="method"></param>
-        /// <returns></returns>
-        public static string GetActivityMethod(int method)
-        {
-            var str = "";
-            switch (method)
-            {
-                case 1: str = "打折"; break;
-                case 2: str = "满减"; break;
-                case 3: str = "买一赠一"; break;
-                default: str = "无"; break;
-            }
-            return str;
-        }
-        /// <summary>
-        /// 根据方式返回参加活动类型
-        /// </summary>
-        /// <param name="method"></param>
-        /// <returns></returns>
-        public static byte GetActivityTypes(int method)
-        {
-            byte str = 1;
-            switch (method)
-            {
-                case 1: str = 2; break;
-                case 2: str = 3; break;
-                case 3: str = 4; break;
-            }
-            return str;
-        }
-        #endregion
-
         #region 得到一周的周一和周日的日期
         /// <summary> 
         /// 计算本周的周一日期 
@@ -681,6 +595,7 @@ namespace Zyck.Frame.Extensions
         {
             return GetMondayDate(DateTime.Now);
         }
+
         /// <summary> 
         /// 计算本周周日的日期 
         /// </summary> 
@@ -689,6 +604,7 @@ namespace Zyck.Frame.Extensions
         {
             return GetSundayDate(DateTime.Now);
         }
+
         /// <summary> 
         /// 计算某日起始日期（礼拜一的日期） 
         /// </summary> 
@@ -701,6 +617,7 @@ namespace Zyck.Frame.Extensions
             TimeSpan ts = new TimeSpan(i, 0, 0, 0);
             return someDate.Subtract(ts);
         }
+
         /// <summary> 
         /// 计算某日结束日期（礼拜日的日期） 
         /// </summary> 
@@ -748,6 +665,17 @@ namespace Zyck.Frame.Extensions
             }
             return week;
         }
+
+        /// <summary>
+        /// 取得传递月份的最后一天
+        /// </summary>
+        /// <param name="datetime">要取得月份最后一天的日期</param>
+        /// <returns></returns>
+        public static DateTime GetMonthLastDay(DateTime datetime)
+        {
+            return datetime.AddDays(1 - datetime.Day).AddMonths(1).AddDays(-1);
+        }
+
         #endregion
 
         /// <summary>
@@ -780,7 +708,6 @@ namespace Zyck.Frame.Extensions
             }
         }
 
-
         /// <summary>
         /// 日期转换为时间戳（时间戳单位秒）
         /// </summary>
@@ -802,94 +729,6 @@ namespace Zyck.Frame.Extensions
             return Assembly.Load(AssemblyName);
         }
 
-        /// <summary>
-        /// 判断模版里的路径有没有typeId的值
-        /// </summary>
-        /// <param name="Url"></param>
-        /// <returns></returns>
-        public static int GetTemplateUrlByTypeId(string Url)
-        {
-            if (Url.Contains("type"))
-            {
-                string typeId = Url.Substring(Url.IndexOf("type=") + 5, 1);
-
-                return int.Parse(typeId);
-            }
-
-            return 1;
-        }
-
-        /// <summary>
-        /// 模型转模型 （属性名 相同转换 ）
-        /// </summary>
-        /// <typeparam name="T">老模型</typeparam>
-        /// <typeparam name="Tn">新模型</typeparam>
-        /// <param name="objmodel">新模型</param>
-        /// <returns></returns>
-        public static Tn ModelToModel<T, Tn>(T objmodel)
-        {
-            Tn Nobjmodel = Activator.CreateInstance<Tn>();          //被继承的类  
-            Type modelType = typeof(T);
-            Type newModelType = typeof(Tn);
-            //继承后的新类
-            PropertyInfo[] newpropertys = newModelType.GetProperties();//列举出新的类中信息  
-                                                                       //循环新类的属性            
-            foreach (PropertyInfo item in newpropertys)
-            {
-                string ParaName = item.Name;//参数名称                
-                string ParamType = item.PropertyType.Name;//字段类型 int/DateTime/string 等等 
-                object value;
-                value = modelType.GetProperty(ParaName).GetValue(objmodel, null);
-                //从被继承的类中根据相同字段名称读取类的值 
-                if (ParamType == "String" && value == null)
-                {
-                    value = "";
-                }
-                newModelType.GetProperty(ParaName).SetValue(Nobjmodel, value);
-            }
-            return Nobjmodel;
-        }
-
-
-        /// <summary>
-        /// 模型转模型 （[DisplayName("Name")] 匹配，如果没有该属性 则为属性名）
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <typeparam name="Tn"></typeparam>
-        /// <param name="objmodel"></param>
-        /// <returns></returns>
-        public static Tn modelConversion<T, Tn>(T objmodel)
-        {
-            Tn Nobjmodel = Activator.CreateInstance<Tn>();          //被继承的类  
-            Type modelType = typeof(T);
-            Type newModelType = typeof(Tn);
-            //继承后的新类
-            PropertyInfo[] newpropertys = newModelType.GetProperties();//列举出新的类中信息  
-            foreach (PropertyInfo item in newpropertys)
-            {
-                /**属性名获取**/
-                string paraName = item.Name;//参数名称
-                string displayName = paraName;// display名称
-                string paramType = item.PropertyType.Name;//字段类型 int/DateTime/string 等等 
-
-                /**获得 属性值**/
-                var propDisplay = item.GetCustomAttributes(typeof(DisplayNameAttribute), true);
-                if (propDisplay != null && propDisplay.Length > 0)
-                {
-                    displayName = ((DisplayNameAttribute)propDisplay[0]).DisplayName;
-                }
-                object value;
-                value = modelType.GetProperty(displayName).GetValue(objmodel, null);
-
-                //给新 模型 赋值
-                if (displayName == "String" && value == null)
-                {
-                    value = "";
-                }
-                newModelType.GetProperty(paraName).SetValue(Nobjmodel, value);
-            }
-            return Nobjmodel;
-        }
 
         /// <summary> 
         /// 功能：预防被除数等于0 
@@ -960,6 +799,7 @@ namespace Zyck.Frame.Extensions
         }
 
 
+        #region 十六进制转换
 
         public static string StringToHexString(string s, Encoding encode)
         {
@@ -991,7 +831,7 @@ namespace Zyck.Frame.Extensions
         /// </summary>
         /// <param name="hexString"></param>
         /// <returns></returns>
-        public static byte[] strToToHexByte(string hexString)
+        public static byte[] StrToToHexByte(string hexString)
         {
             hexString = hexString.Replace(" ", "");
             if ((hexString.Length % 2) != 0)
@@ -1007,7 +847,7 @@ namespace Zyck.Frame.Extensions
         /// </summary>
         /// <param name="bytes"></param>
         /// <returns></returns>
-        public static string byteToHexStr(byte[] bytes)
+        public static string ByteToHexStr(byte[] bytes)
         {
             string returnStr = "";
             if (bytes != null)
@@ -1087,6 +927,7 @@ namespace Zyck.Frame.Extensions
             return chs.GetString(bytes);
         }
 
+        #endregion
 
 
     }

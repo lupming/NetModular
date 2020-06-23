@@ -528,11 +528,11 @@ namespace NetModular.Lib.Data.Core.SqlQueryable.Internal
                     {
                         if (val == null)
                         {
-                            sb.AppendFormat("AND {0}.{1} IS NULL ", _sqlAdapter.AppendQuote(first.Alias), _sqlAdapter.AppendQuote(first.EntityDescriptor.GetDeletedColumnName()));
+                            sb.AppendFormat("AND {0}.{1} IS NULL ", _sqlAdapter.AppendQuote(first.Alias), _sqlAdapter.AppendQuote("TenantId"));
                         }
                         else
                         {
-                            sb.AppendFormat("AND {0}.{1}='{2}' ", _sqlAdapter.AppendQuote(first.Alias), _sqlAdapter.AppendQuote(first.EntityDescriptor.GetDeletedColumnName()), val);
+                            sb.AppendFormat("AND {0}.{1}='{2}' ", _sqlAdapter.AppendQuote(first.Alias), _sqlAdapter.AppendQuote("TenantId"), val);
                         }
                     }
 
@@ -543,11 +543,11 @@ namespace NetModular.Lib.Data.Core.SqlQueryable.Internal
                         {
                             if (val == null)
                             {
-                                sb.AppendFormat("AND {0}.{1} IS NULL ", _sqlAdapter.AppendQuote(descriptor.Alias), _sqlAdapter.AppendQuote(descriptor.EntityDescriptor.GetDeletedColumnName()));
+                                sb.AppendFormat("AND {0}.{1} IS NULL ", _sqlAdapter.AppendQuote(descriptor.Alias), _sqlAdapter.AppendQuote("TenantId"));
                             }
                             else
                             {
-                                sb.AppendFormat("AND {0}.{1}='{2}' ", _sqlAdapter.AppendQuote(descriptor.Alias), _sqlAdapter.AppendQuote(descriptor.EntityDescriptor.GetDeletedColumnName()), val);
+                                sb.AppendFormat("AND {0}.{1}='{2}' ", _sqlAdapter.AppendQuote(descriptor.Alias), _sqlAdapter.AppendQuote("TenantId"), val);
                             }
                         }
                     }

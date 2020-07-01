@@ -26,6 +26,8 @@ namespace NetModular.Lib.Data.Abstractions.SqlQueryable.GroupByQueryable
         TResult Sum<TResult>(Expression<Func<TEntity, TEntity2, TEntity3, TEntity4, TEntity5, TEntity6, TEntity7, TEntity8, TEntity9, TEntity10, TResult>> where);
 
         TResult Avg<TResult>(Expression<Func<TEntity, TEntity2, TEntity3, TEntity4, TEntity5, TEntity6, TEntity7, TEntity8, TEntity9, TEntity10, TResult>> where);
+
+        TResult Count<TResult>(Expression<Func<TEntity, TEntity2, TEntity3, TEntity4, TEntity5, TEntity6, TEntity7, TEntity8, TEntity9, TEntity10, TResult>> where);
     }
 
     /// <summary>

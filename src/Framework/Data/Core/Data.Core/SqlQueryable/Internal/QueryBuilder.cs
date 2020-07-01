@@ -695,8 +695,6 @@ namespace NetModular.Lib.Data.Core.SqlQueryable.Internal
                             ResolveSelectForToUpper(methodCallExp, sqlBuilder, fullExpression, alias);
                             continue;
                         case "COUNT":
-                            sqlBuilder.AppendFormat("COUNT(0) AS {0},", alias);
-                            continue;
                         case "SUM":
                         case "AVG":
                         case "MAX":
@@ -855,6 +853,12 @@ namespace NetModular.Lib.Data.Core.SqlQueryable.Internal
         /// <param name="alias"></param>
         private void ResolveSelectForFunc(MethodCallExpression callExp, StringBuilder sqlBuilder, string funcName, string alias)
         {
+            if (callExp.Arguments.Count == 0 && funcName == "COUNT")
+            {
+                sqlBuilder.AppendFormat("{0}({1}) AS {2},", funcName, "0", alias);
+                return;
+            }
+
             if (callExp.Arguments[0] is UnaryExpression unary && unary.Operand is LambdaExpression lambda)
             {
                 var colName = _queryBody.GetColumnName(lambda.Body as MemberExpression, lambda);
